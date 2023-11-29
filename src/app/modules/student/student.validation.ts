@@ -1,64 +1,50 @@
-import Joi from 'joi';
+import { z } from 'zod';
 
-const userNameValidationSchema = Joi.object({
-  firstName: Joi.string()
-    .required()
-    .trim()
-    .pattern(/^[A-Z][a-z]*$/, { name: 'capitalized' })
-    .messages({
-      'string.pattern.name': '"{#label}" should start with a capital letter',
+const userNameSchema = z.object({
+  firstName: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((value) => /^[A-Z]/.test(value), {
+      message: 'First Name must start with a capital letter',
     }),
-  middleName: Joi.string().trim(),
-  lastName: Joi.string()
-    .required()
-    .trim()
-    .regex(/^[a-zA-Z]+$/)
-    .messages({
-      'string.pattern.base':
-        '"{#label}" should only contain alphabetic characters',
-    }),
+  middleName: z.string(),
+  lastName: z.string(),
 });
 
-const guardianValidationSchema = Joi.object({
-  fatherName: Joi.string().required().trim(),
-  fatherOccupation: Joi.string().required(),
-  fatherContactNo: Joi.string().required(),
-  motherName: Joi.string().required().trim(),
-  motherOccupation: Joi.string().required(),
-  motherContactNo: Joi.string().required(),
+const guardianSchema = z.object({
+  fatherName: z.string(),
+  fatherOccupation: z.string(),
+  fatherContactNo: z.string(),
+  motherName: z.string(),
+  motherOccupation: z.string(),
+  motherContactNo: z.string(),
 });
 
-const localGuardianValidationSchema = Joi.object({
-  name: Joi.string().required(),
-  occupation: Joi.string().required(),
-  contactNo: Joi.string().required(),
-  address: Joi.string().required(),
+const localGuardianSchema = z.object({
+  name: z.string(),
+  occupation: z.string(),
+  contactNo: z.string(),
+  address: z.string(),
 });
 
-const studentValidationSchema = Joi.object({
-  id: Joi.string().required(),
-  name: userNameValidationSchema.required(),
-  gender: Joi.string().valid('male', 'female'),
-  dateOfBirth: Joi.string().allow(null, ''),
-  email: Joi.string().email().required(),
-  contactNo: Joi.string().required(),
-  emergencyContactNo: Joi.string().required(),
-  bloodGroup: Joi.string().valid(
-    'A+',
-    'A-',
-    'B+',
-    'B-',
-    'AB+',
-    'AB-',
-    'O+',
-    'O-',
-  ),
-  presentAddress: Joi.string().required(),
-  permanentAddres: Joi.string().required(),
-  guardian: guardianValidationSchema.required(),
-  localGuardian: localGuardianValidationSchema.required(),
-  profileImg: Joi.string().allow(null, ''),
-  isActive: Joi.string().valid('active', 'blocked'),
+export const studentValidationSchema = z.object({
+  id: z.string(),
+  password: z.string().max(20),
+  name: userNameSchema,
+  gender: z.enum(['male', 'female']),
+  dateOfBirth: z.string(),
+  email: z.string().email(),
+  contactNo: z.string(),
+  emergencyContactNo: z.string(),
+  bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+  presentAddress: z.string(),
+  permanentAddres: z.string(),
+  guardian: guardianSchema,
+  localGuardian: localGuardianSchema,
+  profileImg: z.string(),
+  isActive: z.enum(['active', 'blocked']).default('active'),
+  isDeleted: z.boolean().optional().default(false),
 });
 
 export default studentValidationSchema;
