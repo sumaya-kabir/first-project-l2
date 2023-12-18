@@ -5,10 +5,6 @@ import { TUser } from './user.interface';
 import { User } from './user.model';
 
 const createStudentToDB = async (password: string, studentData: TStudent) => {
-  // if (await User.isUserExists(studentData.id)) {
-  //   throw new Error();
-  // }
-  // create a user object
   const userData: Partial<TUser> = {};
 
   // if password is not given , use default password
@@ -33,7 +29,6 @@ const createStudentToDB = async (password: string, studentData: TStudent) => {
     return newStudent;
   }
 };
-// const student = new Student(studentData); // create an instance
 
 export const UserServices = {
   createStudentToDB,
