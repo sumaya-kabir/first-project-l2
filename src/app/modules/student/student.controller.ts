@@ -32,7 +32,8 @@ const deleteStudent = catchAsync(async (req, res) => {
 
   const result = await StudentServices.deleteStudentFromDB(studentId);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Student is deleted succesfully',
     data: result,
